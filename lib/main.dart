@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
+import 'package:shared_preferences_ios/shared_preferences_ios.dart';
 import 'image_picker_screen.dart';
+import 'globals.dart' as globals;
 
 void main() {
   runApp(const MyApp());
@@ -39,12 +45,20 @@ class SightingsPage extends StatefulWidget {
 
 class _SightingsPageState extends State<SightingsPage> {
   int currentPageIndex = 0;
-  static const List<String> titles = ['Sightings', 'Salamanders'];
+  static const List<String> titles = ['Sightings', 'Salamanders', 'Settings'];
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    // fetch data
+    if (Platform.isAndroid) SharedPreferencesAndroid.registerWith();
+    if (Platform.isIOS) SharedPreferencesIOS.registerWith();
+    getServerAddress();
+  }
+
+  void getServerAddress() async {
+    final prefs = await SharedPreferences.getInstance();
+    globals.serverAddress = prefs.getString("serverAddress") ?? '';
   }
 
   @override
@@ -76,18 +90,45 @@ class _SightingsPageState extends State<SightingsPage> {
           ],
         ),
         GridView.count(
-        crossAxisCount: 2,
-        children: List.generate(20, (index) {
-          return Column(
-            children: [
-              // Hero(
-              //     tag: index,
-              //     child: Image.network('http://192.168.0.141:5000/individuals/1/image')
-              // ),
+          crossAxisCount: 2,
+          children: List.generate(20, (index) {
+            return const Column(
+              children: [
+                // Hero(
+                //     tag: index,
+                //     child: Image.network('${globals.serverAddress}/individuals/1/image')
+                // ),
+              ],
+            );
+          }),
+        ),
+        Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text('Server address'),
+              TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'http://192.168.0.10',
+                ),
+                initialValue: globals.serverAddress,
+                onSaved: (value) async {
+                  final prefs = await SharedPreferences.getInstance();
+                  globals.serverAddress = value!;
+                  prefs.setString('serverAddress', value!);
+                },
+              ),
+              TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                    }
+                  },
+                  child: const Text("Save")),
             ],
-          );
-        }),
-      )
+          ),
+        )
       ][currentPageIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -115,6 +156,7 @@ class _SightingsPageState extends State<SightingsPage> {
             icon: Icon(Icons.group),
             label: 'Salamanders',
           ),
+          NavigationDestination(icon: Icon(Icons.settings), label: 'Settings')
         ],
       ),
     );

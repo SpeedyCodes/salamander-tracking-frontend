@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:salamander_tracker/new_sighting_screen.dart';
 import 'candidate_details_screen.dart';
 import 'models/sighting_evaluation.dart';
+import 'globals.dart' as globals;
 
 class SightingCandidatePickerScreen extends StatelessWidget {
   final SightingEvaluation sightingEvaluation;
@@ -28,13 +29,13 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: Text('None of these candidates is correct')),
+                child: const Text('None of these candidates is correct')),
             SizedBox(
-              height: 50,
+              height: 500,
               // implement GridView.builder
               child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 150,
+                      maxCrossAxisExtent: 300,
                       childAspectRatio: 2 / 3,
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20),
@@ -45,11 +46,9 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                         Hero(
                             tag: sightingEvaluation
                                 .candidates[index].individualId,
-                            child: Container(
-                              child: Image.network(
-                                'http://192.168.0.141:5000/individuals/${sightingEvaluation.candidates[index].individualId}/image',
-                                height: 20,
-                              ),
+                            child: Image.network(
+                              '${globals.serverAddress}/individuals/${sightingEvaluation.candidates[index].individualId}/image',
+                              height: 20,
                             )),
                         TextButton(
                           child: Text('Salamander $index'),

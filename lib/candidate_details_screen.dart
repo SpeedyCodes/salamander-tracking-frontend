@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:salamander_tracker/new_sighting_screen.dart';
+import 'globals.dart' as globals;
 
 class CandidateDetailsScreen extends StatelessWidget {
   final String individualId;
@@ -19,7 +19,7 @@ class CandidateDetailsScreen extends StatelessWidget {
           Hero(
               tag: individualId,
               child: Image.network(
-                  'http://192.168.0.141:5000/individuals/$individualId/image')),
+                  '${globals.serverAddress}/individuals/$individualId/image')),
           Text(
             'Salamander $individualId',
             style: Theme.of(context).textTheme.headlineSmall,

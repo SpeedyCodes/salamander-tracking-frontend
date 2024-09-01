@@ -7,6 +7,8 @@ import 'package:salamander_tracker/models/sighting_evaluation.dart';
 import 'sighting_salamander_picker_screen.dart';
 import 'dart:convert';
 
+import 'globals.dart' as globals;
+
 class ImagePickerScreen extends StatefulWidget {
   const ImagePickerScreen({super.key});
 
@@ -18,8 +20,8 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
   late XFile? imageFile = null;
 
   Future<void> pickImage(ImageSource source) async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? pickedFile = await _picker.pickImage(source: source);
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
         imageFile = pickedFile;
@@ -56,7 +58,7 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                     onPressed: () async {
                       Uint8List body = await imageFile!.readAsBytes();
                       http.post(
-                        Uri.parse('http://192.168.0.141:5000/store_sighting'),
+                        Uri.parse('${globals.serverAddress}/store_sighting'),
                         body: body,
                       ).then((response) {
                         final SightingEvaluation sightingEvaluation =

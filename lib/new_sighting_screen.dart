@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'globals.dart' as globals;
 
 class NewSightingScreen extends StatelessWidget {
   final String? individualId;
@@ -63,7 +64,7 @@ class NewSightingScreen extends StatelessWidget {
                         http
                             .post(
                           Uri.parse(
-                              'http://192.168.0.141:5000/confirm/$sightingId'),
+                              '${globals.serverAddress}/confirm/$sightingId'),
                           headers: <String, String>{
                             'Content-Type': 'application/json',
                           },
@@ -79,7 +80,7 @@ class NewSightingScreen extends StatelessWidget {
                         http
                             .post(
                                 Uri.parse(
-                                    'http://192.168.0.141:5000/confirm/$sightingId?individual_id=$individualId'),
+                                    '${globals.serverAddress}/confirm/$sightingId?individual_id=$individualId'),
                                 headers: {'Content-Type': 'application/json'},
                                 body: json.encode({
                                   'spotted_at': spottedAt.toIso8601String()
