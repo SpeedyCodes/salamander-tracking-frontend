@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'new_sighting_screen.dart';
+import 'image_picker_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -80,10 +80,10 @@ class _SightingsPageState extends State<SightingsPage> {
         children: List.generate(20, (index) {
           return Column(
             children: [
-              Hero(
-                  tag: index,
-                  child: Image.network('https://waarnemingen.be/media/photo/000/733/733977.jpg')
-              ),
+              // Hero(
+              //     tag: index,
+              //     child: Image.network('http://192.168.0.141:5000/individuals/1/image')
+              // ),
             ],
           );
         }),
@@ -93,7 +93,7 @@ class _SightingsPageState extends State<SightingsPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const NewSightingScreen()),
+            MaterialPageRoute(builder: (context) => const ImagePickerScreen()),
           );
         },
         tooltip: 'Increment',

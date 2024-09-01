@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:salamander_tracker/new_sighting_screen.dart';
 
 class CandidateDetailsScreen extends StatelessWidget {
-  final int index;
-  const CandidateDetailsScreen({Key? key, required this.index}) : super(key: key);
+  final String individualId;
+  final String sightingId;
+  const CandidateDetailsScreen(
+      {super.key, required this.individualId, required this.sightingId});
 
   @override
   Widget build(BuildContext context) {
@@ -13,19 +17,24 @@ class CandidateDetailsScreen extends StatelessWidget {
       body: Column(
         children: [
           Hero(
-                  tag: index,
-                  child: Image.network('https://waarnemingen.be/media/photo/000/733/733977.jpg')
-          ),
+              tag: individualId,
+              child: Image.network(
+                  'http://192.168.0.141:5000/individuals/$individualId/image')),
           Text(
-            'Salamander $index',
+            'Salamander $individualId',
             style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          Text(
-            'The salamander is a small amphibian that lives in the water.',
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NewSightingScreen(
+                    individualId: individualId,
+                    sightingId: sightingId,
+                  ),
+                ),
+              );
             },
             child: const Text('Pick'),
           ),
