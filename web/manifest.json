@@ -1,6 +1,6 @@
 {
-    "name": "salamander_tracker",
-    "short_name": "salamander_tracker",
+    "name": "SalamanderTracking",
+    "short_name": "SalamanderTracking",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

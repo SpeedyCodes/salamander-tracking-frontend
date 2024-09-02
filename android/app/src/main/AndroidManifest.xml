@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="salamander_tracker"
+        android:label="SalamanderTracking"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

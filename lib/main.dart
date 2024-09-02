@@ -1,11 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:salamander_tracker/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_ios/shared_preferences_ios.dart';
 import 'image_picker_screen.dart';
+import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
+import 'models/sighting.dart';
+import 'models/individual.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,18 +51,49 @@ class _SightingsPageState extends State<SightingsPage> {
   int currentPageIndex = 0;
   static const List<String> titles = ['Sightings', 'Salamanders', 'Settings'];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  List<Sighting> sightings = [];
+  List<Individual> individuals = [];
 
   @override
   void initState() {
     super.initState();
+    currentPageIndex = 0;
     if (Platform.isAndroid) SharedPreferencesAndroid.registerWith();
     if (Platform.isIOS) SharedPreferencesIOS.registerWith();
     getServerAddress();
+    refresh();
+  }
+
+  Future<void> fetchSightings() async{
+    await http.get(Uri.parse('${globals.serverAddress}/sightings')).then((value){
+      setState(() {
+        sightings = sightingsFromJson(value.body);
+        return;
+      });
+    });
+  }
+
+  Future<void> fetchIndividuals() async{
+    await http.get(Uri.parse('${globals.serverAddress}/individuals')).then((value){
+      setState(() {
+        individuals = individualsFromJson(value.body);
+        return;
+      });
+    });
+  }
+
+  Future<void> refresh() async {
+    Future<void> f1 = fetchSightings();
+    Future<void> f2 = fetchIndividuals();
+    await Future.wait([f1, f2]);
   }
 
   void getServerAddress() async {
     final prefs = await SharedPreferences.getInstance();
-    globals.serverAddress = prefs.getString("serverAddress") ?? '';
+    String address = prefs.getString("serverAddress") ?? '';
+    if(address.isNotEmpty) {
+      globals.serverAddress = address;
+    }
   }
 
   @override
@@ -70,38 +105,30 @@ class _SightingsPageState extends State<SightingsPage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(titles[currentPageIndex]),
       ),
-      body: <Widget>[
-        ListView(
-          // use builder  https://www.youtube.com/watch?v=HCmAwk2fnZc
-          scrollDirection: Axis.vertical,
-          children: const [
-            ListTile(
-              title: Text('Salamander 1'),
-              subtitle: Text('Sighted on 2022-01-01'),
-            ),
-            ListTile(
-              title: Text('Salamander 2'),
-              subtitle: Text('Sighted on 2022-01-02'),
-            ),
-            ListTile(
-              title: Text('Salamander 3'),
-              subtitle: Text('Sighted on 2022-01-03'),
-            ),
-          ],
-        ),
-        GridView.count(
-          crossAxisCount: 2,
-          children: List.generate(20, (index) {
-            return const Column(
-              children: [
-                // Hero(
-                //     tag: index,
-                //     child: Image.network('${globals.serverAddress}/individuals/1/image')
-                // ),
-              ],
+      body: IndexedStack(
+        index: currentPageIndex,
+        children: <Widget>[
+        RefreshIndicator(
+          onRefresh: refresh,
+          child: ListView.builder(
+          itemCount: sightings.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(sightings[index].individualName),
+              subtitle: Text(formatDate(sightings[index].date)),
             );
-          }),
-        ),
+          },
+        )),
+        RefreshIndicator(
+          onRefresh: refresh,
+          child: ListView.builder(
+          itemCount: individuals.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(individuals[index].name),
+            );
+          },
+        )),
         Form(
           key: _formKey,
           child: Column(
@@ -116,7 +143,7 @@ class _SightingsPageState extends State<SightingsPage> {
                 onSaved: (value) async {
                   final prefs = await SharedPreferences.getInstance();
                   globals.serverAddress = value!;
-                  prefs.setString('serverAddress', value!);
+                  prefs.setString('serverAddress', value);
                 },
               ),
               TextButton(
@@ -129,7 +156,8 @@ class _SightingsPageState extends State<SightingsPage> {
             ],
           ),
         )
-      ][currentPageIndex],
+      ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
