@@ -64,7 +64,7 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                         final SightingEvaluation sightingEvaluation =
                             SightingEvaluation.fromJson(
                                 json.decode(response.body));
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>

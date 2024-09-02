@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Salamander Tracker',
       theme: ThemeData(
         colorScheme: const ColorScheme.dark(),
         useMaterial3: true,
@@ -163,7 +163,9 @@ class _SightingsPageState extends State<SightingsPage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ImagePickerScreen()),
-          );
+          ).then((onValue){
+            refresh();
+          });
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
