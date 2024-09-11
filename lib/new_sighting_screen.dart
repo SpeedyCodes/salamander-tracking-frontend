@@ -27,16 +27,13 @@ class NewSightingScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               individualId == null
-                  ? const Text('Nickname for the newly created salamander')
+                  ? const Text('Nickname for the newly created salamander:')
                   : Container(),
               individualId == null
                   ? TextFormField(
                       onSaved: (String? value) {
                         nickname = value!;
                       },
-                      decoration: const InputDecoration(
-                        hintText: 'jimmy',
-                      ),
                       validator: (String? value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a name';
@@ -45,11 +42,12 @@ class NewSightingScreen extends StatelessWidget {
                       },
                     )
                   : Container(),
-              const Text('Date of sighting'),
+              const Padding( padding: EdgeInsets.symmetric(vertical: 8.0), child: const Text('Date of sighting:')),
               InputDatePickerFormField(
                 initialDate: DateTime.now(),
                 firstDate: DateTime(2000),
                 lastDate: DateTime.now(),
+                fieldLabelText: "",
                 onDateSaved: (DateTime value) {
                   spottedAt = value;
                 },

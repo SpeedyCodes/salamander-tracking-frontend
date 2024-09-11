@@ -17,7 +17,7 @@ class SightingCandidatePickerScreen extends StatelessWidget {
         ), // TODO show original image here as well
         body: Column(
           children: [
-            TextButton(
+            ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -48,10 +48,10 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                                 .candidates[index].individualId,
                             child: Image.network(
                               '${globals.serverAddress}/individuals/${sightingEvaluation.candidates[index].individualId}/image',
-                              height: 20,
+                              height: 120,
                             )),
                         TextButton(
-                          child: Text('Salamander $index'),
+                          child: const Text('Salamander'),
                           onPressed: () {
                             Navigator.push(
                               context,
