@@ -11,7 +11,7 @@ class Sighting {
     DateTime date;
     String imageId;
     String individualId;
-    String individualName;
+    String? individualName;
 
     Sighting({
         required this.id,

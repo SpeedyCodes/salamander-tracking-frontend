@@ -42,7 +42,7 @@ class NewSightingScreen extends StatelessWidget {
                       },
                     )
                   : Container(),
-              const Padding( padding: EdgeInsets.symmetric(vertical: 8.0), child: const Text('Date of sighting:')),
+              const Padding( padding: EdgeInsets.symmetric(vertical: 8.0), child: Text('Date of sighting:')),
               InputDatePickerFormField(
                 initialDate: DateTime.now(),
                 firstDate: DateTime(2000),

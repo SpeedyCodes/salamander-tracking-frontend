@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:salamander_tracker/individual_details_screen.dart';
+import 'package:salamander_tracker/sighting_details_screen.dart';
 import 'package:salamander_tracker/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
@@ -114,8 +116,14 @@ class _SightingsPageState extends State<SightingsPage> {
           itemCount: sightings.length,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
-              title: Text(sightings[index].individualName),
+              title: Text(sightings[index].individualName!),
               subtitle: Text(formatDate(sightings[index].date)),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SightingDetailsScreen(sighting: sightings[index])),
+                );
+              },
             );
           },
         )),
@@ -126,6 +134,12 @@ class _SightingsPageState extends State<SightingsPage> {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               title: Text(individuals[index].name),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => IndividualDetailsScreen(individual: individuals[index])),
+                );
+              },
             );
           },
         )),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:salamander_tracker/models/sighting_evaluation.dart';
 import 'package:salamander_tracker/new_sighting_screen.dart';
 import 'globals.dart' as globals;
 
 class CandidateDetailsScreen extends StatelessWidget {
-  final String individualId;
-  final String sightingId;
+  final Candidate candidate;
+  final String newSightingId;
   const CandidateDetailsScreen(
-      {super.key, required this.individualId, required this.sightingId});
+      {super.key, required this.candidate , required this.newSightingId});
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +18,11 @@ class CandidateDetailsScreen extends StatelessWidget {
       body: Column(
         children: [
           Hero(
-              tag: individualId,
+              tag: candidate.individual.id,
               child: Image.network(
-                  '${globals.serverAddress}/individuals/$individualId/image')),
+                  '${globals.serverAddress}/individuals/${candidate.individual.id}/image')),
           Text(
-            'Salamander $individualId',
+            candidate.individual.name,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           ElevatedButton(
@@ -30,8 +31,8 @@ class CandidateDetailsScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => NewSightingScreen(
-                    individualId: individualId,
-                    sightingId: sightingId,
+                    individualId: candidate.individual.id,
+                    sightingId: candidate.sighting.id,
                   ),
                 ),
               );
@@ -44,6 +45,8 @@ class CandidateDetailsScreen extends StatelessWidget {
             },
             child: const Text('Back'),
           ),
+          const Text("new photo: "),
+          Image.network('${globals.serverAddress}/sightings/$newSightingId/image'),
         ],
       ),
     );

@@ -45,21 +45,21 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                       children: [
                         Hero(
                             tag: sightingEvaluation
-                                .candidates[index].individualId,
+                                .candidates[index].individual.id,
                             child: Image.network(
-                              '${globals.serverAddress}/individuals/${sightingEvaluation.candidates[index].individualId}/image',
+                              '${globals.serverAddress}/individuals/${sightingEvaluation.candidates[index].individual.id}/image',
                               height: 120,
                             )),
                         TextButton(
-                          child: const Text('Salamander'),
+                          child: Text(sightingEvaluation
+                                .candidates[index].individual.name),
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => CandidateDetailsScreen(
-                                  individualId: sightingEvaluation
-                                      .candidates[index].individualId,
-                                  sightingId: sightingEvaluation.sightingId,
+                                  candidate: sightingEvaluation.candidates[index],
+                                  newSightingId: sightingEvaluation.sightingId,
                                 ),
                               ),
                             );
