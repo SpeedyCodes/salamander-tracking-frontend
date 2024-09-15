@@ -32,7 +32,7 @@ class CandidateDetailsScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => NewSightingScreen(
                     individualId: candidate.individual.id,
-                    sightingId: candidate.sighting.id,
+                    sightingId: newSightingId,
                   ),
                 ),
               );
