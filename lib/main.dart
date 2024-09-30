@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
 import 'models/sighting.dart';
 import 'models/individual.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +25,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Salamander Tracker',
+      locale: const Locale('en', 'GB'),
+      supportedLocales: const [
+        Locale('en', 'GB'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeResolutionCallback: (locale, supportedLocales) => locale,  
       theme: ThemeData(
         colorScheme: const ColorScheme.dark(),
         useMaterial3: true,

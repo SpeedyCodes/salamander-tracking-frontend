@@ -51,8 +51,8 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                               height: 120,
                             )),
                         TextButton(
-                          child: Text(sightingEvaluation
-                                .candidates[index].individual.name),
+                          child: Text('${sightingEvaluation
+                                .candidates[index].individual.name}\nConfidence: ${sightingEvaluation.candidates[index].confidence}'),
                           onPressed: () {
                             Navigator.push(
                               context,

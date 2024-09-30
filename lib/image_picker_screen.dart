@@ -56,14 +56,43 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                   ElevatedButton(
                     child: const Text('Upload image'),
                     onPressed: () async {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (_) {
+                            return const Dialog(
+                              // The background color
+                              backgroundColor: Colors.transparent,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // The loading indicator
+                                    CircularProgressIndicator(),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    // Some text
+                                    Text('Server is processing the image...')
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+
+
                       Uint8List body = await imageFile!.readAsBytes();
-                      http.post(
+                      http
+                          .post(
                         Uri.parse('${globals.serverAddress}/store_sighting'),
                         body: body,
-                      ).then((response) {
+                      )
+                          .then((response) {
                         final SightingEvaluation sightingEvaluation =
                             SightingEvaluation.fromJson(
                                 json.decode(response.body));
+                      Navigator.of(context).pop();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
