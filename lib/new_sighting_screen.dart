@@ -42,7 +42,9 @@ class NewSightingScreen extends StatelessWidget {
                       },
                     )
                   : Container(),
-              const Padding( padding: EdgeInsets.symmetric(vertical: 8.0), child: Text('Date of sighting:')),
+              const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text('Date of sighting:')),
               InputDatePickerFormField(
                 initialDate: DateTime.now(),
                 firstDate: DateTime(2000),
@@ -63,7 +65,7 @@ class NewSightingScreen extends StatelessWidget {
                             .post(
                           Uri.parse(
                               '${globals.serverAddress}/confirm/$sightingId'),
-                          headers: <String, String>{
+                          headers: {
                             'Content-Type': 'application/json',
                           },
                           body: jsonEncode(<String, String>{

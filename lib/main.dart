@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:salamander_tracker/individual_details_screen.dart';
 import 'package:salamander_tracker/sighting_details_screen.dart';
@@ -71,8 +72,9 @@ class _SightingsPageState extends State<SightingsPage> {
   void initState() {
     super.initState();
     currentPageIndex = 0;
-    if (Platform.isAndroid) SharedPreferencesAndroid.registerWith();
-    if (Platform.isIOS) SharedPreferencesIOS.registerWith();
+    if (kIsWeb) {}
+    else if (Platform.isAndroid) SharedPreferencesAndroid.registerWith();
+    else if (Platform.isIOS) SharedPreferencesIOS.registerWith();
     getServerAddress();
     refresh();
   }

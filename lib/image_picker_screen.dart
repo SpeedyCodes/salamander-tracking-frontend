@@ -44,7 +44,7 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
               scrollDirection: Axis.vertical,
               children: [
                 if (imageFile != null) ...[
-                  Image.file(File(imageFile!.path)),
+                  Image.network(imageFile!.path),
                   ElevatedButton(
                     child: const Text('Clear image'),
                     onPressed: () {
