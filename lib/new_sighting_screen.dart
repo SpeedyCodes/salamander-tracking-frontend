@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
 
 class NewSightingScreen extends StatelessWidget {
-  final String? individualId;
-  final String sightingId;
+  final int? individualId;
+  final int sightingId;
   NewSightingScreen(
       {super.key, required this.individualId, required this.sightingId});
 

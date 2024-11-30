@@ -9,29 +9,21 @@ Individual individualFromJson(String str) => Individual.fromJson(json.decode(str
 String individualsToJson(List<Individual> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Individual {
-    String id;
-    dynamic coordinates;
+    int id;
     String name;
-    List<String> sightingIds;
 
     Individual({
         required this.id,
-        required this.coordinates,
         required this.name,
-        required this.sightingIds,
     });
 
     factory Individual.fromJson(Map<String, dynamic> json) => Individual(
-        id: json["_id"],
-        coordinates: json["coordinates"],
+        id: json["id"],
         name: json["name"],
-        sightingIds: List<String>.from(json["sighting_ids"].map((x) => x)),
     );
 
     Map<String, dynamic> toJson() => {
-        "_id": id,
-        "coordinates": coordinates,
+        "id": id,
         "name": name,
-        "sighting_ids": List<dynamic>.from(sightingIds.map((x) => x)),
     };
 }

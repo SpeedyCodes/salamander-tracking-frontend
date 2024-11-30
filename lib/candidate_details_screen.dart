@@ -5,7 +5,7 @@ import 'globals.dart' as globals;
 
 class CandidateDetailsScreen extends StatelessWidget {
   final Candidate candidate;
-  final String newSightingId;
+  final int newSightingId;
   const CandidateDetailsScreen(
       {super.key, required this.candidate , required this.newSightingId});
 

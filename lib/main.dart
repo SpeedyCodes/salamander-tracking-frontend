@@ -116,8 +116,6 @@ class _SightingsPageState extends State<SightingsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(titles[currentPageIndex]),
       ),
       body: IndexedStack(
@@ -129,7 +127,7 @@ class _SightingsPageState extends State<SightingsPage> {
           itemCount: sightings.length,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
-              title: Text(sightings[index].individualName!),
+              title: Text(sightings[index].individual!.name),
               subtitle: Text(formatDate(sightings[index].date)),
               onTap: (){
                 Navigator.push(

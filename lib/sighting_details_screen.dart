@@ -17,7 +17,7 @@ class SightingDetailsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Text('Sighting Details for ${sighting.individualName!}'),
+          Text('Sighting Details for ${sighting.individual!.name}'),
           Text('Sighted on ${formatDate(sighting.date)}'),
           Image.network(
                   '${globals.serverAddress}/individuals/${sighting.individualId}/image')
