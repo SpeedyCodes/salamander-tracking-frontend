@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:salamander_tracker/models/individual.dart';
+import 'package:salamander_tracker/models/location.dart';
 import 'package:salamander_tracker/utils.dart';
 
 
@@ -15,6 +16,7 @@ class Sighting {
     int individualId;
     String? individualName;
     Individual? individual;
+    Location? location;
 
     Sighting({
         required this.id,
@@ -22,6 +24,7 @@ class Sighting {
         required this.individualId,
         required this.individualName,
         this.individual,
+        this.location,
     });
 
     factory Sighting.fromJson(Map<String, dynamic> json) => Sighting(
@@ -30,6 +33,7 @@ class Sighting {
         individualId: json["individual_id"],
         individualName: json["individual_name"],
         individual: json["individual"] == null ? null : Individual.fromJson(json["individual"]),
+        location: json["location"] == null ? null : Location.fromJson(json["location"]),
     );
 
     Map<String, dynamic> toJson() => {

@@ -128,7 +128,7 @@ class _SightingsPageState extends State<SightingsPage> {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               title: Text(sightings[index].individual!.name),
-              subtitle: Text(formatDate(sightings[index].date)),
+              subtitle: Text("Spotted at ${sightings[index].location!.name} on ${formatDate(sightings[index].date)}"),
               onTap: (){
                 Navigator.push(
                   context,
@@ -192,7 +192,7 @@ class _SightingsPageState extends State<SightingsPage> {
             refresh();
           });
         },
-        tooltip: 'Increment',
+        tooltip: 'Add a new sighting',
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: NavigationBar(
