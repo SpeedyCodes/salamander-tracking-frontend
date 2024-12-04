@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      localeResolutionCallback: (locale, supportedLocales) => locale,  
+      localeResolutionCallback: (locale, supportedLocales) => locale,
       theme: ThemeData(
         colorScheme: const ColorScheme.dark(),
         useMaterial3: true,
@@ -72,15 +72,38 @@ class _SightingsPageState extends State<SightingsPage> {
   void initState() {
     super.initState();
     currentPageIndex = 0;
-    if (kIsWeb) {}
-    else if (Platform.isAndroid) SharedPreferencesAndroid.registerWith();
+    if (kIsWeb) {
+    } else if (Platform.isAndroid)
+      SharedPreferencesAndroid.registerWith();
     else if (Platform.isIOS) SharedPreferencesIOS.registerWith();
-    getServerAddress();
+    initServerAddress();
+  }
+
+  Future<void> initServerAddress() async {
+    await getServerAddress();
+    if (globals.serverAddress.isEmpty && !kIsWeb) { // if on web, the api is on the same server
+      final snackBar = SnackBar(
+        content: Text('Please set the server address in the settings.'),
+        action: SnackBarAction(
+          label: 'Settings',
+          onPressed: () {
+            setState(() {
+              currentPageIndex = 2;
+            });
+          },
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
     refresh();
   }
 
-  Future<void> fetchSightings() async{
-    await http.get(Uri.parse('${globals.serverAddress}/sightings')).then((value){
+  Future<void> fetchSightings() async {
+    await http
+        .get(Uri.parse('${globals.serverAddress}/sightings'))
+        .then((value) {
       setState(() {
         sightings = sightingsFromJson(value.body);
         return;
@@ -88,8 +111,10 @@ class _SightingsPageState extends State<SightingsPage> {
     });
   }
 
-  Future<void> fetchIndividuals() async{
-    await http.get(Uri.parse('${globals.serverAddress}/individuals')).then((value){
+  Future<void> fetchIndividuals() async {
+    await http
+        .get(Uri.parse('${globals.serverAddress}/individuals'))
+        .then((value) {
       setState(() {
         individuals = individualsFromJson(value.body);
         return;
@@ -103,10 +128,10 @@ class _SightingsPageState extends State<SightingsPage> {
     await Future.wait([f1, f2]);
   }
 
-  void getServerAddress() async {
+  Future<void> getServerAddress() async {
     final prefs = await SharedPreferences.getInstance();
     String address = prefs.getString("serverAddress") ?? '';
-    if(address.isNotEmpty) {
+    if (address.isNotEmpty) {
       globals.serverAddress = address;
     }
   }
@@ -121,74 +146,79 @@ class _SightingsPageState extends State<SightingsPage> {
       body: IndexedStack(
         index: currentPageIndex,
         children: <Widget>[
-        RefreshIndicator(
-          onRefresh: refresh,
-          child: ListView.builder(
-          itemCount: sightings.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(sightings[index].individual!.name),
-              subtitle: Text("Spotted at ${sightings[index].location!.name} on ${formatDate(sightings[index].date)}"),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SightingDetailsScreen(sighting: sightings[index])),
-                );
-              },
-            );
-          },
-        )),
-        RefreshIndicator(
-          onRefresh: refresh,
-          child: ListView.builder(
-          itemCount: individuals.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(individuals[index].name),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => IndividualDetailsScreen(individual: individuals[index])),
-                );
-              },
-            );
-          },
-        )),
-        Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text('Server address'),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: 'http://192.168.0.10',
-                ),
-                initialValue: globals.serverAddress,
-                onSaved: (value) async {
-                  final prefs = await SharedPreferences.getInstance();
-                  globals.serverAddress = value!;
-                  prefs.setString('serverAddress', value);
+          RefreshIndicator(
+              onRefresh: refresh,
+              child: ListView.builder(
+                itemCount: sightings.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(sightings[index].individual!.name),
+                    subtitle: Text(
+                        "Spotted at ${sightings[index].location!.name} on ${formatDate(sightings[index].date)}"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SightingDetailsScreen(
+                                sighting: sightings[index])),
+                      );
+                    },
+                  );
                 },
-              ),
-              TextButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                    }
+              )),
+          RefreshIndicator(
+              onRefresh: refresh,
+              child: ListView.builder(
+                itemCount: individuals.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(individuals[index].name),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => IndividualDetailsScreen(
+                                individual: individuals[index])),
+                      );
+                    },
+                  );
+                },
+              )),
+          Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text('Server address'),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    hintText: 'http://192.168.0.10',
+                  ),
+                  initialValue: globals.serverAddress,
+                  onSaved: (value) async {
+                    final prefs = await SharedPreferences.getInstance();
+                    globals.serverAddress = value!;
+                    prefs.setString('serverAddress', value);
                   },
-                  child: const Text("Save")),
-            ],
-          ),
-        )
-      ],
+                ),
+                TextButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                      }
+                    },
+                    child: const Text("Save")),
+              ],
+            ),
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ImagePickerScreen()),
-          ).then((onValue){
+          ).then((onValue) {
             refresh();
           });
         },
