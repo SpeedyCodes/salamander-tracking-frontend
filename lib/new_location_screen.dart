@@ -14,7 +14,7 @@ class NewLocationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sighting Details'),
+        title: const Text('New Location'),
       ),
       body: Form(
           key: _formKey,

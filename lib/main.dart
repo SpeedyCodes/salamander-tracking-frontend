@@ -97,6 +97,9 @@ class _SightingsPageState extends State<SightingsPage> {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }
+    else if(globals.debug) {
+      globals.serverAddress = 'http://localhost:5000';
+    }
     refresh();
   }
 

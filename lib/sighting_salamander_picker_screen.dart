@@ -3,6 +3,8 @@ import 'package:salamander_tracker/new_sighting_screen.dart';
 import 'candidate_details_screen.dart';
 import 'models/sighting_evaluation.dart';
 import 'globals.dart' as globals;
+import 'processed_images_screen.dart';
+import 'package:http/http.dart' as http;
 
 class SightingCandidatePickerScreen extends StatelessWidget {
   final SightingEvaluation sightingEvaluation;
@@ -30,6 +32,27 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                   );
                 },
                 child: const Text('None of these candidates is correct')),
+
+            ElevatedButton(
+                onPressed: () {
+                  http.delete(Uri.parse('${globals.serverAddress}/sightings/${sightingEvaluation.sightingId}')).then((value) {
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text('Delete sighting')),
+
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProcessedImagesScreen(
+                        sightingId: sightingEvaluation.sightingId,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('See processed images')),
             SizedBox(
               height: 500,
               // implement GridView.builder
