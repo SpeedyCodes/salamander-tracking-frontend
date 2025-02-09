@@ -148,7 +148,7 @@ class _NewSightingScreenState extends State<NewSightingScreen> {
                       http
                             .post(
                                 Uri.parse(url),
-                                headers: {'Content-Type': 'application/json'},
+                                headers: {'Content-Type': 'application/json', "Authorization": globals.authHeader},
                                 body: json.encode(body))
                             .then((response) {
                           Navigator.popUntil(context, ModalRoute.withName('/'));

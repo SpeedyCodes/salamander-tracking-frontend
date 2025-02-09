@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:salamander_tracker/individual_details_screen.dart';
@@ -67,6 +66,7 @@ class _SightingsPageState extends State<SightingsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<Sighting> sightings = [];
   List<Individual> individuals = [];
+  bool authenticated = false;
 
   @override
   void initState() {
@@ -76,12 +76,13 @@ class _SightingsPageState extends State<SightingsPage> {
     } else if (Platform.isAndroid)
       SharedPreferencesAndroid.registerWith();
     else if (Platform.isIOS) SharedPreferencesIOS.registerWith();
-    initServerAddress();
+    initServerConnection();
   }
 
-  Future<void> initServerAddress() async {
+  Future<void> initServerConnection() async {
     await getServerAddress();
-    if (globals.serverAddress.isEmpty && !kIsWeb) { // if on web, the api is on the same server
+    if (globals.serverAddress.isEmpty && !kIsWeb) {
+      // if on web, the api is on the same server
       final snackBar = SnackBar(
         content: Text('Please set the server address in the settings.'),
         action: SnackBarAction(
@@ -96,11 +97,18 @@ class _SightingsPageState extends State<SightingsPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
-    }
-    else if(globals.debug) {
+    } else if (globals.debug) {
       globals.serverAddress = 'http://localhost:5000';
     }
-    refresh();
+    await refresh();
+    final prefs = await SharedPreferences.getInstance();
+    String password = prefs.getString("password") ?? '';
+    if (password.isNotEmpty) {
+      authenticated = await loginWithResultSnackbar(password);
+      if (authenticated) {
+        globals.serverAddress = password;
+      }
+    }
   }
 
   Future<void> fetchSightings() async {
@@ -137,6 +145,21 @@ class _SightingsPageState extends State<SightingsPage> {
     if (address.isNotEmpty) {
       globals.serverAddress = address;
     }
+  }
+
+  Future<bool> loginWithResultSnackbar(String password) async {
+    bool result = await login(password);
+    SnackBar snackBar = SnackBar(
+      content: result
+          ? const Text('Authenticated successfully.')
+          : const Text('Authentication failed.'),
+    );
+
+    setState(() {
+      authenticated = result;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    return result;
   }
 
   @override
@@ -199,9 +222,21 @@ class _SightingsPageState extends State<SightingsPage> {
                   ),
                   initialValue: globals.serverAddress,
                   onSaved: (value) async {
+                    if (value == "") return;
                     final prefs = await SharedPreferences.getInstance();
                     globals.serverAddress = value!;
                     prefs.setString('serverAddress', value);
+                  },
+                ),
+                const Text('Password'),
+                TextFormField(
+                  initialValue: "",
+                  onSaved: (value) async {
+                    bool success = await loginWithResultSnackbar(value!);
+                    if (success) {
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setString('password', value!);
+                    }
                   },
                 ),
                 TextButton(
@@ -216,18 +251,21 @@ class _SightingsPageState extends State<SightingsPage> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ImagePickerScreen()),
-          ).then((onValue) {
-            refresh();
-          });
-        },
-        tooltip: 'Add a new sighting',
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: authenticated
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ImagePickerScreen()),
+                ).then((onValue) {
+                  refresh();
+                });
+              },
+              tooltip: 'Add a new sighting',
+              child: const Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {

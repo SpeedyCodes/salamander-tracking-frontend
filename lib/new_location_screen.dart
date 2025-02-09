@@ -43,7 +43,7 @@ class NewLocationScreen extends StatelessWidget {
                             .post(
                                 Uri.parse(
                                     '${globals.serverAddress}/locations'),
-                                headers: {'Content-Type': 'application/json'},
+                                headers: {'Content-Type': 'application/json', "Authorization": globals.authHeader},
                                 body: locationToJson(Location(name: name, preciseLocation: [0, 0])))
                             .then((response) {
                           Navigator.pop(context, locationFromJson(response.body));

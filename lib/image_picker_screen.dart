@@ -86,6 +86,7 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                       http
                           .post(
                         Uri.parse('${globals.serverAddress}/store_sighting'),
+                        headers: {"Authorization": globals.authHeader},
                         body: body,
                       )
                           .then((response) {

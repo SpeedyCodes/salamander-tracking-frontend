@@ -35,7 +35,9 @@ class SightingCandidatePickerScreen extends StatelessWidget {
 
             ElevatedButton(
                 onPressed: () {
-                  http.delete(Uri.parse('${globals.serverAddress}/sightings/${sightingEvaluation.sightingId}')).then((value) {
+                  http.delete(
+                    Uri.parse('${globals.serverAddress}/sightings/${sightingEvaluation.sightingId}'),
+                    headers: {"Authorization": globals.authHeader}).then((value) {
                     Navigator.pop(context);
                   });
                 },
