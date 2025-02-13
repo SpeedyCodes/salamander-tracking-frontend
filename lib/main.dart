@@ -232,7 +232,7 @@ class _SightingsPageState extends State<SightingsPage> {
                     bool success = await loginWithResultSnackbar(value!);
                     if (success) {
                       final prefs = await SharedPreferences.getInstance();
-                      prefs.setString('password', value!);
+                      prefs.setString('password', value);
                     }
                   },
                 ),

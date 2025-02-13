@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
 import 'package:salamander_tracker/models/location.dart';
@@ -9,6 +10,8 @@ class NewLocationScreen extends StatelessWidget {
   
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String name = '';
+  double longitude = 0;
+  double latitude = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,22 @@ class NewLocationScreen extends StatelessWidget {
                         return null;
                       },
                     ),
+              const Text('Longitude:'),
+              TextFormField(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$'))],
+                        maxLines: 1,
+                        validator: (val) => val == null || val.isEmpty ? 'This field is required' : null,
+                        onSaved: (newValue) => longitude = double.parse(newValue!),
+                      ),
+              const Text('Latitude:'),
+              TextFormField(
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$'))],
+                        maxLines: 1,
+                        validator: (val) => val == null || val.isEmpty ? 'This field is required' : null,
+                        onSaved: (newValue) => latitude = double.parse(newValue!),
+                      ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: TextButton(
@@ -44,7 +63,7 @@ class NewLocationScreen extends StatelessWidget {
                                 Uri.parse(
                                     '${globals.serverAddress}/locations'),
                                 headers: {'Content-Type': 'application/json', "Authorization": globals.authHeader},
-                                body: locationToJson(Location(name: name, preciseLocation: [0, 0])))
+                                body: locationToJson(Location(name: name, preciseLocation: [longitude, latitude])))
                             .then((response) {
                           Navigator.pop(context, locationFromJson(response.body));
                         });

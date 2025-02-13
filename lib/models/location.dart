@@ -11,7 +11,7 @@ String locationToJson(Location data) => json.encode(data.toJson());
 class Location {
     int? id;
     String name;
-    List<int> preciseLocation;
+    List<double> preciseLocation;
 
     Location({
         this.id,
@@ -22,7 +22,7 @@ class Location {
     factory Location.fromJson(Map<String, dynamic> json) => Location(
         id: json["id"],
         name: json["name"],
-        preciseLocation: List<int>.from(json["precise_location"].map((x) => x)),
+        preciseLocation: List<double>.from(json["precise_location"].map((x) => x)),
     );
 
     Map<String, dynamic> toJson() => {

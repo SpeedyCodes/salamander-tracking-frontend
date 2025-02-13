@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:salamander_tracker/models/sighting_evaluation.dart';
+import 'models/location.dart';
+import 'new_location_screen.dart';
 import 'sighting_salamander_picker_screen.dart';
 import 'dart:convert';
 
 import 'globals.dart' as globals;
+import 'utils.dart';
 
 class ImagePickerScreen extends StatefulWidget {
   const ImagePickerScreen({super.key});
@@ -17,6 +20,9 @@ class ImagePickerScreen extends StatefulWidget {
 
 class _ImagePickerScreenState extends State<ImagePickerScreen> {
   late XFile? imageFile = null;
+  
+  var locations = <Location>[];
+  Location? locationSelected = null;
 
   Future<void> pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
@@ -26,6 +32,17 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
         imageFile = pickedFile;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLocations().then(
+      (value) => setState(() {
+        locations = value;
+        locationSelected = locations.isEmpty ? null : locations[0];
+      }),
+    );
   }
 
   @override
@@ -44,6 +61,48 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
               children: [
                 if (imageFile != null) ...[
                   Image.network(imageFile!.path),
+                  ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => NewLocationScreen()),
+                    ).then(
+                      (value) => {
+                        if (value != null)
+                          {
+                            setState(() {
+                              locations.add(value as Location);
+                              locationSelected = value;
+                            })
+                          }
+                      },
+                    );
+                    
+                  },
+                  child: const Text('Create new location')),
+              const Text('Location:'),
+              DropdownButton<Location>(
+                value: locationSelected,
+                elevation: 16,
+                style: const TextStyle(color: Colors.deepPurple),
+                underline: Container(
+                  height: 2,
+                  color: Colors.deepPurpleAccent,
+                ),
+                onChanged: (Location? value) {
+                  // This is called when the user selects an item.
+                  setState(() {
+                    locationSelected = value!;
+                  });
+                },
+                items: locations.map<DropdownMenuItem<Location>>((Location location) {
+                  return DropdownMenuItem<Location>(
+                    value: location,
+                    child: Text(location.name),
+                  );
+                }).toList(),
+              ),
                   ElevatedButton(
                     child: const Text('Clear image'),
                     onPressed: () {
@@ -83,7 +142,7 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                       Uint8List body = await imageFile!.readAsBytes();
                       http
                           .post(
-                        Uri.parse('${globals.serverAddress}/store_sighting'),
+                        Uri.parse('${globals.serverAddress}/store_sighting${locationSelected != null ? '?location_id=${locationSelected!.id}' : ''}'),
                         headers: {"Authorization": globals.authHeader},
                         body: body,
                       )
