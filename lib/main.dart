@@ -105,9 +105,6 @@ class _SightingsPageState extends State<SightingsPage> {
     String password = prefs.getString("password") ?? '';
     if (password.isNotEmpty) {
       authenticated = await loginWithResultSnackbar(password);
-      if (authenticated) {
-        globals.serverAddress = password;
-      }
     }
   }
 

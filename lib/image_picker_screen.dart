@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:salamander_tracker/models/sighting_evaluation.dart';
 import 'sighting_salamander_picker_screen.dart';
@@ -81,7 +80,6 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                             );
                           });
 
-
                       Uint8List body = await imageFile!.readAsBytes();
                       http
                           .post(
@@ -90,10 +88,17 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                         body: body,
                       )
                           .then((response) {
+                        if (response.statusCode == 400) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  "This image's quality is too low. Please try another image.")));
+                          return;
+                        }
                         final SightingEvaluation sightingEvaluation =
                             SightingEvaluation.fromJson(
                                 json.decode(response.body));
-                      Navigator.of(context).pop();
+                        Navigator.of(context).pop();
                         Navigator.push(
                           context,
                           MaterialPageRoute(

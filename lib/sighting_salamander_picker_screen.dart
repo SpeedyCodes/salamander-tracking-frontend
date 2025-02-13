@@ -19,6 +19,7 @@ class SightingCandidatePickerScreen extends StatelessWidget {
         ), // TODO show original image here as well
         body: Column(
           children: [
+            Text("Image quality: ${sightingEvaluation.quality}"),
             ElevatedButton(
                 onPressed: () {
                   Navigator.push(

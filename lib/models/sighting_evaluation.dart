@@ -5,19 +5,23 @@ import 'sighting.dart';
 class SightingEvaluation {
     int sightingId;
     List<Candidate> candidates;
+    String quality;
 
     SightingEvaluation({
         required this.sightingId,
         required this.candidates,
+        required this.quality,
     });
 
     factory SightingEvaluation.fromJson(Map<String, dynamic> json) => SightingEvaluation(
         sightingId: json["sighting_id"],
         candidates: List<Candidate>.from(json["candidates"].map((x) => Candidate.fromJson(x))),
+        quality: json["quality"],
     );
 
     Map<String, dynamic> toJson() => {
         "sighting_id": sightingId,
+        "quality": quality,
         "candidates": List<dynamic>.from(candidates.map((x) => x.toJson())),
     };
 }
