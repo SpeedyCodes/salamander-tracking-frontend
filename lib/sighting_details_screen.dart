@@ -28,9 +28,22 @@ class SightingDetailsScreen extends StatelessWidget {
         children: [
           Text('Sighting Details for ${sighting.individual!.name}'),
           Text('Sighted on ${formatDate(sighting.date)}'),
+          sighting.location != null
+              ? Text('Spotted at ${sighting.location!.name}')
+              : const Text('Location unknown'),
           TextButton(onPressed: onPressed, child: const Text('See processed images')),
-          Image.network(
-                  '${globals.serverAddress}/individuals/${sighting.individualId}/image')
+          Expanded(
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+              height: 200.0,
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: [Image.network(
+                  '${globals.serverAddress}/individuals/${sighting.individualId}/image')],
+              ),
+            )),
+          )
         ],
       ),
     );

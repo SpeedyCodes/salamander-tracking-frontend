@@ -9,7 +9,12 @@ import 'package:salamander_tracker/utils.dart';
 class NewSightingScreen extends StatefulWidget {
   final int? individualId;
   final int sightingId;
-  const NewSightingScreen({super.key, required this.individualId, required this.sightingId});
+  final Location? initialLocation;
+  const NewSightingScreen(
+      {super.key,
+      required this.individualId,
+      required this.sightingId,
+      required this.initialLocation});
 
   @override
   State<NewSightingScreen> createState() => _NewSightingScreenState();
@@ -30,12 +35,16 @@ class _NewSightingScreenState extends State<NewSightingScreen> {
     super.initState();
     fetchLocations().then(
       (value) => setState(() {
-        locations = value;
-        locationSelected = locations.isEmpty ? null : locations[0];
+        if (widget.initialLocation != null) {
+          locations.add(widget.initialLocation!);
+          locationSelected = widget.initialLocation;
+        } else {
+          locations = value;
+          locationSelected = locations.isEmpty ? null : locations[0];
+        }
       }),
     );
   }
-
 
   // on init, fetch locations
   @override
@@ -74,7 +83,6 @@ class _NewSightingScreenState extends State<NewSightingScreen> {
                           }
                       },
                     );
-                    
                   },
                   child: const Text('Create new location')),
               const Text('Location:'),
@@ -92,7 +100,8 @@ class _NewSightingScreenState extends State<NewSightingScreen> {
                     locationSelected = value!;
                   });
                 },
-                items: locations.map<DropdownMenuItem<Location>>((Location location) {
+                items: locations
+                    .map<DropdownMenuItem<Location>>((Location location) {
                   return DropdownMenuItem<Location>(
                     value: location,
                     child: Text(location.name),
@@ -143,16 +152,18 @@ class _NewSightingScreenState extends State<NewSightingScreen> {
                         url += '&location_id=${locationSelected!.id}';
                       }
                       if (widget.individualId == null) {
-                        body['nickname'] = nickname;                        
+                        body['nickname'] = nickname;
                       }
                       http
-                            .post(
-                                Uri.parse(url),
-                                headers: {'Content-Type': 'application/json', "Authorization": globals.authHeader},
-                                body: json.encode(body))
-                            .then((response) {
-                          Navigator.popUntil(context, ModalRoute.withName('/'));
-                        });
+                          .post(Uri.parse(url),
+                              headers: {
+                                'Content-Type': 'application/json',
+                                "Authorization": globals.authHeader
+                              },
+                              body: json.encode(body))
+                          .then((response) {
+                        Navigator.popUntil(context, ModalRoute.withName('/'));
+                      });
                     }
                   },
                   child: const Text('Submit'),

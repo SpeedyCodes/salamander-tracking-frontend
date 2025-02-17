@@ -176,8 +176,8 @@ class _SightingsPageState extends State<SightingsPage> {
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                     title: Text(sightings[index].individual!.name),
-                    subtitle: Text(
-                        "Spotted at ${sightings[index].location!.name} on ${formatDate(sightings[index].date)}"),
+                    subtitle: sightings[index].location != null ? Text(
+                        "Spotted at ${sightings[index].location!.name} on ${formatDate(sightings[index].date)}") : null,
                     onTap: () {
                       Navigator.push(
                         context,

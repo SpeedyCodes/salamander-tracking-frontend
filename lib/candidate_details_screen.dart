@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salamander_tracker/models/location.dart';
 import 'package:salamander_tracker/models/sighting_evaluation.dart';
 import 'package:salamander_tracker/new_sighting_screen.dart';
 import 'globals.dart' as globals;
@@ -6,8 +7,9 @@ import 'globals.dart' as globals;
 class CandidateDetailsScreen extends StatelessWidget {
   final Candidate candidate;
   final int newSightingId;
+  final Location? initialLocation;
   const CandidateDetailsScreen(
-      {super.key, required this.candidate , required this.newSightingId});
+      {super.key, required this.candidate , required this.newSightingId, required this.initialLocation});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +19,20 @@ class CandidateDetailsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Hero(
+          Expanded(
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+              height: 200.0,
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: [Hero(
               tag: candidate.individual.id,
               child: Image.network(
-                  '${globals.serverAddress}/individuals/${candidate.individual.id}/image')),
+                  '${globals.serverAddress}/individuals/${candidate.individual.id}/image'))],
+              ),
+            )),
+          ),
           Text(
             candidate.individual.name,
             style: Theme.of(context).textTheme.headlineSmall,
@@ -33,6 +45,7 @@ class CandidateDetailsScreen extends StatelessWidget {
                   builder: (context) => NewSightingScreen(
                     individualId: candidate.individual.id,
                     sightingId: newSightingId,
+                    initialLocation: initialLocation,
                   ),
                 ),
               );
@@ -46,7 +59,18 @@ class CandidateDetailsScreen extends StatelessWidget {
             child: const Text('Back'),
           ),
           const Text("new photo: "),
-          Image.network('${globals.serverAddress}/sightings/$newSightingId/image'),
+          Expanded(
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+              height: 200.0,
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: [Image.network('${globals.serverAddress}/sightings/$newSightingId/image')],
+              ),
+            )),
+          )
+          ,
         ],
       ),
     );

@@ -1,4 +1,5 @@
-import 'dart:typed_data';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -54,134 +55,156 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
       body: Center(
         child: Column(children: [
           Expanded(
-              child: SizedBox(
-            height: 200.0,
-            child: ListView(
-              scrollDirection: Axis.vertical,
-              children: [
-                if (imageFile != null) ...[
-                  Image.network(imageFile!.path),
-                  ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => NewLocationScreen()),
-                    ).then(
-                      (value) => {
-                        if (value != null)
-                          {
-                            setState(() {
-                              locations.add(value as Location);
-                              locationSelected = value;
-                            })
-                          }
-                      },
-                    );
-                    
-                  },
-                  child: const Text('Create new location')),
-              const Text('Location:'),
-              DropdownButton<Location>(
-                value: locationSelected,
-                elevation: 16,
-                style: const TextStyle(color: Colors.deepPurple),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (Location? value) {
-                  // This is called when the user selects an item.
-                  setState(() {
-                    locationSelected = value!;
-                  });
-                },
-                items: locations.map<DropdownMenuItem<Location>>((Location location) {
-                  return DropdownMenuItem<Location>(
-                    value: location,
-                    child: Text(location.name),
-                  );
-                }).toList(),
-              ),
-                  ElevatedButton(
-                    child: const Text('Clear image'),
-                    onPressed: () {
-                      setState(() {
-                        imageFile = null;
-                      });
-                    },
-                  ),
-                  ElevatedButton(
-                    child: const Text('Upload image'),
-                    onPressed: () async {
-                      showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (_) {
-                            return const Dialog(
-                              // The background color
-                              backgroundColor: Colors.transparent,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 20),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // The loading indicator
-                                    CircularProgressIndicator(),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    // Some text
-                                    Text('Server is processing the image...')
-                                  ],
-                                ),
-                              ),
-                            );
-                          });
-
-                      Uint8List body = await imageFile!.readAsBytes();
-                      http
-                          .post(
-                        Uri.parse('${globals.serverAddress}/store_sighting${locationSelected != null ? '?location_id=${locationSelected!.id}' : ''}'),
-                        headers: {"Authorization": globals.authHeader},
-                        body: body,
-                      )
-                          .then((response) {
-                        if (response.statusCode == 400) {
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text(
-                                  "This image's quality is too low. Please try another image.")));
-                          return;
-                        }
-                        final SightingEvaluation sightingEvaluation =
-                            SightingEvaluation.fromJson(
-                                json.decode(response.body));
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SightingCandidatePickerScreen(
-                                      sightingEvaluation: sightingEvaluation)),
-                        );
-                      });
-                    },
-                  ),
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+              height: 200.0,
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: [
+                  if (imageFile != null) ...[
+                    kIsWeb
+                        ? Image.network(imageFile!.path)
+                        : Image.file(File(imageFile!.path)),
+                  ],
                 ],
-              ],
-            ),
-          )),
-          ElevatedButton(
-              child: const Text('Load image from storage'),
-              onPressed: () {
-                pickImage(ImageSource.gallery);
-              }),
-          ElevatedButton(
-              child: const Text('Take a picture'),
-              onPressed: () {
-                pickImage(ImageSource.camera);
-              }),
+              ),
+            )),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              if (imageFile != null) ...[
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NewLocationScreen()),
+                      ).then(
+                        (value) => {
+                          if (value != null)
+                            {
+                              setState(() {
+                                locations.add(value as Location);
+                                locationSelected = value;
+                              })
+                            }
+                        },
+                      );
+                    },
+                    child: const Text('Create new location')),
+                const Text('Location:'),
+                DropdownButton<Location>(
+                  value: locationSelected,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (Location? value) {
+                    // This is called when the user selects an item.
+                    setState(() {
+                      locationSelected = value!;
+                    });
+                  },
+                  items: locations
+                      .map<DropdownMenuItem<Location>>((Location location) {
+                    return DropdownMenuItem<Location>(
+                      value: location,
+                      child: Text(location.name),
+                    );
+                  }).toList(),
+                ),
+                ElevatedButton(
+                  child: const Text('Clear image'),
+                  onPressed: () {
+                    setState(() {
+                      imageFile = null;
+                    });
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('Upload image'),
+                  onPressed: () async {
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (_) {
+                          return const Dialog(
+                            // The background color
+                            backgroundColor: Colors.transparent,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // The loading indicator
+                                  CircularProgressIndicator(),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  // Some text
+                                  Text('Server is processing the image...')
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+
+                    Uint8List body = await imageFile!.readAsBytes();
+                    http
+                        .post(
+                      Uri.parse(
+                          '${globals.serverAddress}/store_sighting${locationSelected != null ? '?location_id=${locationSelected!.id}' : ''}'),
+                      headers: {"Authorization": globals.authHeader},
+                      body: body,
+                    )
+                        .then((response) {
+                      if (response.statusCode == 400) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text(
+                                "This image's quality is too low. Please try another image.")));
+                        return;
+                      }
+                      final SightingEvaluation sightingEvaluation =
+                          SightingEvaluation.fromJson(
+                              json.decode(response.body));
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SightingCandidatePickerScreen(
+                                sightingEvaluation: sightingEvaluation,
+                                location: locationSelected)),
+                      );
+                    });
+                  },
+                ),
+              ]
+            ],
+          ),
+          // group the buttons together to disable them together
+          // if there is no image
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              if (imageFile == null) ...<Widget>[
+                ElevatedButton(
+                    child: const Text('Load image from storage'),
+                    onPressed: () {
+                      pickImage(ImageSource.gallery);
+                    }),
+                ElevatedButton(
+                    child: const Text('Take a picture'),
+                    onPressed: () {
+                      pickImage(ImageSource.camera);
+                    }),
+              ]
+            ],
+          ),
         ]),
       ),
     );
