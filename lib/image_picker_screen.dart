@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:photo_view/photo_view.dart';
 import 'package:salamander_tracker/models/sighting_evaluation.dart';
 import 'models/location.dart';
 import 'new_location_screen.dart';
@@ -21,7 +22,7 @@ class ImagePickerScreen extends StatefulWidget {
 
 class _ImagePickerScreenState extends State<ImagePickerScreen> {
   late XFile? imageFile = null;
-  
+
   var locations = <Location>[];
   Location? locationSelected = null;
 
@@ -54,23 +55,16 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
       ),
       body: Center(
         child: Column(children: [
-          Expanded(
-            child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: SizedBox(
-              height: 200.0,
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: [
-                  if (imageFile != null) ...[
-                    kIsWeb
-                        ? Image.network(imageFile!.path)
-                        : Image.file(File(imageFile!.path)),
-                  ],
-                ],
-              ),
-            )),
-          ),
+          if (imageFile != null) ...[
+            Expanded(child: PhotoView(
+                imageProvider: kIsWeb
+                    ? NetworkImage(imageFile!.path)
+                    : FileImage(File(imageFile!.path)),
+                backgroundDecoration: const BoxDecoration(
+                  color: Colors.black,
+                ))),
+          ],
+
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

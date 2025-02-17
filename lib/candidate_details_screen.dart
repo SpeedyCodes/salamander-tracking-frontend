@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:salamander_tracker/models/location.dart';
 import 'package:salamander_tracker/models/sighting_evaluation.dart';
 import 'package:salamander_tracker/new_sighting_screen.dart';
@@ -19,20 +20,12 @@ class CandidateDetailsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: SizedBox(
-              height: 200.0,
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: [Hero(
-              tag: candidate.individual.id,
-              child: Image.network(
-                  '${globals.serverAddress}/individuals/${candidate.individual.id}/image'))],
-              ),
-            )),
-          ),
+          Expanded(child: PhotoView(
+                imageProvider: NetworkImage(
+                  '${globals.serverAddress}/individuals/${candidate.individual.id}/image'),
+                backgroundDecoration: const BoxDecoration(
+                  color: Colors.black,
+                ))),
           Text(
             candidate.individual.name,
             style: Theme.of(context).textTheme.headlineSmall,
@@ -58,19 +51,12 @@ class CandidateDetailsScreen extends StatelessWidget {
             },
             child: const Text('Back'),
           ),
-          const Text("new photo: "),
-          Expanded(
-            child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: SizedBox(
-              height: 200.0,
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: [Image.network('${globals.serverAddress}/sightings/$newSightingId/image')],
-              ),
-            )),
-          )
-          ,
+          const Text("new photo: "),          
+          Expanded(child: PhotoView(
+                imageProvider: NetworkImage('${globals.serverAddress}/sightings/$newSightingId/image'),
+                backgroundDecoration: const BoxDecoration(
+                  color: Colors.black,
+                ))),
         ],
       ),
     );

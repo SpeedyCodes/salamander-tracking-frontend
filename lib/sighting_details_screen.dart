@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:salamander_tracker/models/sighting.dart';
 import 'globals.dart' as globals;
 import 'utils.dart';
@@ -32,17 +33,12 @@ class SightingDetailsScreen extends StatelessWidget {
               ? Text('Spotted at ${sighting.location!.name}')
               : const Text('Location unknown'),
           TextButton(onPressed: onPressed, child: const Text('See processed images')),
-          Expanded(
-            child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: SizedBox(
-              height: 200.0,
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                children: [Image.network(
-                  '${globals.serverAddress}/individuals/${sighting.individualId}/image')],
-              ),
-            )),
+          Expanded(child: PhotoView(
+                imageProvider: NetworkImage(
+                  '${globals.serverAddress}/individuals/${sighting.individualId}/image'),
+                backgroundDecoration: const BoxDecoration(
+                  color: Colors.black,
+                ))
           )
         ],
       ),

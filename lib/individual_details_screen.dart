@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:salamander_tracker/models/individual.dart';
 import 'globals.dart' as globals;
 import 'models/sighting.dart';
+import 'sighting_details_screen.dart';
 import 'utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -43,19 +44,24 @@ class _IndividualDetailsScreenState extends State<IndividualDetailsScreen> {
       appBar: AppBar(
         title: const Text('Individual Details'),
       ),
-      body: Column(
-        children: [
-          Text('Individual Details for ${widget.individual.name}'),
-          for (var sighting in widget.sightings)
-            Column(
-              children: [
-                Text('Sighted on ${formatDate(sighting.date)}'),
-                Image.network(
-                    '${globals.serverAddress}/sightings/${sighting.id}/image')
-              ],
-            )
-        ],
-      ),
+      body: 
+      ListView.builder(
+                itemCount: widget.sightings.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: widget.sightings[index].location != null ? Text(
+                        "Spotted at ${widget.sightings[index].location!.name} on ${formatDate(widget.sightings[index].date)}") : null,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SightingDetailsScreen(
+                                sighting: widget.sightings[index])),
+                      );
+                    },
+                  );
+                },
+              ),
     );
   }
 }

@@ -73,13 +73,10 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                     itemBuilder: (BuildContext ctx, index) {
                       return Column(
                         children: [
-                          Hero(
-                              tag: sightingEvaluation
-                                  .candidates[index].individual.id,
-                              child: Image.network(
+                          Image.network(
                                 '${globals.serverAddress}/individuals/${sightingEvaluation.candidates[index].individual.id}/image',
                                 height: 120,
-                              )),
+                              ),
                           TextButton(
                             child: Text('${sightingEvaluation
                                   .candidates[index].individual.name}\nConfidence: ${sightingEvaluation.candidates[index].confidence}'),
