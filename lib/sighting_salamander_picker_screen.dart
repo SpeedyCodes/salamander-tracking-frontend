@@ -36,7 +36,7 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text('None of these candidates is correct')),
+                  child: const Text('None of these candidates are correct')),
           
               ElevatedButton(
                   onPressed: () {
