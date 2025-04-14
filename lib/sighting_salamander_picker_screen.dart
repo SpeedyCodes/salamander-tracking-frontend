@@ -36,18 +36,22 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text('None of these candidates is correct')),
-          
+                  child: sightingEvaluation.candidates.isNotEmpty
+                      ? const Text('None of these candidates is correct')
+                      : const Text('No candidates found - create new individual'),
+                  ),
               ElevatedButton(
                   onPressed: () {
                     http.delete(
-                      Uri.parse('${globals.serverAddress}/sightings/${sightingEvaluation.sightingId}'),
-                      headers: {"Authorization": globals.authHeader}).then((value) {
+                        Uri.parse(
+                            '${globals.serverAddress}/sightings/${sightingEvaluation.sightingId}'),
+                        headers: {
+                          "Authorization": globals.authHeader
+                        }).then((value) {
                       Navigator.pop(context);
                     });
                   },
                   child: const Text('Delete sighting')),
-          
               ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -63,39 +67,45 @@ class SightingCandidatePickerScreen extends StatelessWidget {
               SizedBox(
                 height: 500,
                 // implement GridView.builder
-                child: sightingEvaluation.candidates.isNotEmpty ? GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 300,
-                        childAspectRatio: 2 / 3,
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20),
-                    itemCount: sightingEvaluation.candidates.length,
-                    itemBuilder: (BuildContext ctx, index) {
-                      return Column(
-                        children: [
-                          Image.network(
+                child: sightingEvaluation.candidates.isNotEmpty
+                    ? GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 300,
+                                childAspectRatio: 2 / 3,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20),
+                        itemCount: sightingEvaluation.candidates.length,
+                        itemBuilder: (BuildContext ctx, index) {
+                          return Column(
+                            children: [
+                              Image.network(
                                 '${globals.serverAddress}/individuals/${sightingEvaluation.candidates[index].individual.id}/image',
                                 height: 120,
                               ),
-                          TextButton(
-                            child: Text('${sightingEvaluation
-                                  .candidates[index].individual.name}\nConfidence: ${sightingEvaluation.candidates[index].confidence}'),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CandidateDetailsScreen(
-                                    candidate: sightingEvaluation.candidates[index],
-                                    newSightingId: sightingEvaluation.sightingId,
-                                    initialLocation: location,
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                        ],
-                      );
-                    }) : const Text('No candidates found'),
+                              TextButton(
+                                child: Text(
+                                    '${sightingEvaluation.candidates[index].individual.name}\nConfidence: ${sightingEvaluation.candidates[index].confidence}'),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CandidateDetailsScreen(
+                                        candidate: sightingEvaluation
+                                            .candidates[index],
+                                        newSightingId:
+                                            sightingEvaluation.sightingId,
+                                        initialLocation: location,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          );
+                        })
+                    : const Text('No candidates found'),
               ),
             ],
           ),

@@ -10,6 +10,7 @@ import 'package:shared_preferences_ios/shared_preferences_ios.dart';
 import 'image_picker_screen.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
+import 'models/location.dart';
 import 'models/sighting.dart';
 import 'models/individual.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -67,6 +68,8 @@ class _SightingsPageState extends State<SightingsPage> {
   List<Sighting> sightings = [];
   List<Individual> individuals = [];
   bool authenticated = false;
+  List<Location> locations = [];
+  Location? locationSelected = null;
 
   @override
   void initState() {
@@ -110,7 +113,7 @@ class _SightingsPageState extends State<SightingsPage> {
 
   Future<void> fetchSightings() async {
     await http
-        .get(Uri.parse('${globals.serverAddress}/sightings'))
+        .get(Uri.parse('${globals.serverAddress}/sightings?location_id=${locationSelected?.id}'))
         .then((value) {
       setState(() {
         sightings = sightingsFromJson(value.body);
@@ -121,7 +124,7 @@ class _SightingsPageState extends State<SightingsPage> {
 
   Future<void> fetchIndividuals() async {
     await http
-        .get(Uri.parse('${globals.serverAddress}/individuals'))
+        .get(Uri.parse('${globals.serverAddress}/individuals?location_id=${locationSelected?.id}'))
         .then((value) {
       setState(() {
         individuals = individualsFromJson(value.body);
@@ -133,7 +136,13 @@ class _SightingsPageState extends State<SightingsPage> {
   Future<void> refresh() async {
     Future<void> f1 = fetchSightings();
     Future<void> f2 = fetchIndividuals();
+    Future<List<Location>> f3 = fetchLocations();
     await Future.wait([f1, f2]);
+    await f3.then((value) {
+      setState(() {
+        locations = value;
+      });
+    });
   }
 
   Future<void> getServerAddress() async {
@@ -243,6 +252,36 @@ class _SightingsPageState extends State<SightingsPage> {
                       }
                     },
                     child: const Text("Save")),
+              const Text("Only show results for location: "),
+              DropdownButton<Location>(
+                  value: locationSelected,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.deepPurple),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                  onChanged: (Location? value) {
+                    // This is called when the user selects an item.
+                    setState(() {
+                      locationSelected = value;
+                      fetchSightings();
+                      fetchIndividuals();
+                    });
+                  },
+                  items: locations
+                      .map<DropdownMenuItem<Location>>((Location location) {
+                    return DropdownMenuItem<Location>(
+                      value: location,
+                      child: Text(location.name),
+                    );
+                  }).toList() + [
+                    const DropdownMenuItem<Location>(
+                      value: null,
+                      child: Text("All"),
+                    ),
+                  ],
+                ),
               ],
             ),
           )
