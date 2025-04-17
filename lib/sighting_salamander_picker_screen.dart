@@ -37,7 +37,7 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                     );
                   },
                   child: sightingEvaluation.candidates.isNotEmpty
-                      ? const Text('None of these candidates is correct')
+                      ? const Text('None of these candidates are correct')
                       : const Text('No candidates found - create new individual'),
                   ),
               ElevatedButton(
