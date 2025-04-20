@@ -6,6 +6,7 @@ import 'models/sighting_evaluation.dart';
 import 'globals.dart' as globals;
 import 'processed_images_screen.dart';
 import 'package:http/http.dart' as http;
+import 'utils.dart';
 
 class SightingCandidatePickerScreen extends StatelessWidget {
   final SightingEvaluation sightingEvaluation;
@@ -42,12 +43,7 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                   ),
               ElevatedButton(
                   onPressed: () {
-                    http.delete(
-                        Uri.parse(
-                            '${globals.serverAddress}/sightings/${sightingEvaluation.sightingId}'),
-                        headers: {
-                          "Authorization": globals.authHeader
-                        }).then((value) {
+                    deleteSighting(sightingEvaluation.sightingId).then((value) {
                       Navigator.pop(context);
                     });
                   },

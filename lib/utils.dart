@@ -33,3 +33,12 @@ Future<bool> login(String? value) async {
   globals.authHeader = "Bearer ${response.body}";
   return response.statusCode == 200;
 }
+
+  Future<http.Response> deleteSighting(int sightingId) {
+    return http.delete(
+                      Uri.parse(
+                          '${globals.serverAddress}/sightings/$sightingId'),
+                      headers: {
+                        "Authorization": globals.authHeader
+                      });
+}

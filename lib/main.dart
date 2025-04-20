@@ -187,6 +187,14 @@ class _SightingsPageState extends State<SightingsPage> {
                     title: Text(sightings[index].individual!.name),
                     subtitle: sightings[index].location != null ? Text(
                         "Spotted at ${sightings[index].location!.name} on ${formatDate(sightings[index].date)}") : null,
+
+                    trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () async {
+                          await deleteSighting(sightings[index].id);
+                          refresh();
+                        },
+                      ),
                     onTap: () {
                       Navigator.push(
                         context,
