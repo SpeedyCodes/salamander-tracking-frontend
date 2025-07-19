@@ -134,12 +134,10 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // The loading indicator
                                   CircularProgressIndicator(),
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  // Some text
                                   Text('Server is processing the image...')
                                 ],
                               ),
@@ -161,6 +159,12 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text(
                                 "This image's quality is too low. Please try another image.")));
+                        return;
+                      }else if (response.statusCode != 200) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Error uploading image: ${response.body}")));
                         return;
                       }
                       final SightingEvaluation sightingEvaluation =

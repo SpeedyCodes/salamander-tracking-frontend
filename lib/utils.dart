@@ -10,8 +10,7 @@ String formatDate(DateTime dt) {
 }
 
 DateTime parseDate(String dt) {
-  final DateFormat formatter = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
-  return formatter.parse(dt);
+  return DateTime.parse(dt);
 }
 
 Future<List<Location>> fetchLocations() async {
@@ -29,9 +28,11 @@ Future<bool> login(String? value) async {
     headers: {'Content-Type': 'application/json'},
     body: json.encode({"password": value}),
   );
-
-  globals.authHeader = "Bearer ${response.body}";
-  return response.statusCode == 200;
+  if (response.statusCode != 200) {
+    return false;
+  }
+  globals.authHeader = "Bearer ${json.decode(response.body)["token"]}";
+  return true;
 }
 
   Future<http.Response> deleteSighting(int sightingId) {
@@ -41,4 +42,4 @@ Future<bool> login(String? value) async {
                       headers: {
                         "Authorization": globals.authHeader
                       });
-}
+  }
