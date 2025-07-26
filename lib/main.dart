@@ -113,7 +113,7 @@ class _SightingsPageState extends State<SightingsPage> {
 
   Future<void> fetchSightings() async {
     await http
-        .get(Uri.parse('${globals.serverAddress}/sightings?location_id=${locationSelected?.id}'))
+        .get(Uri.parse('${globals.serverUrl()}/sightings?location_id=${locationSelected?.id}'))
         .then((value) {
       setState(() {
         sightings = sightingsFromJson(value.body);
@@ -124,7 +124,7 @@ class _SightingsPageState extends State<SightingsPage> {
 
   Future<void> fetchIndividuals() async {
     await http
-        .get(Uri.parse('${globals.serverAddress}/individuals?location_id=${locationSelected?.id}'))
+        .get(Uri.parse('${globals.serverUrl()}/individuals?location_id=${locationSelected?.id}'))
         .then((value) {
       setState(() {
         individuals = individualsFromJson(value.body);

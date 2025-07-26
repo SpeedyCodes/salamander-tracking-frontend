@@ -28,7 +28,7 @@ class _IndividualDetailsScreenState extends State<IndividualDetailsScreen> {
 
   void fetchSightings() async {
     var response = await http.get(
-        Uri.parse('${globals.serverAddress}/sightings?individual_id=${widget.individual.id}'));
+        Uri.parse('${globals.serverUrl()}/sightings?individual_id=${widget.individual.id}'));
     if (response.statusCode == 200) {
       setState(() {
         widget.sightings = sightingsFromJson(response.body);

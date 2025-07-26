@@ -143,8 +143,8 @@ class _NewSightingScreenState extends State<NewSightingScreen> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       String url = widget.individualId == null
-                          ? '${globals.serverAddress}/confirm/${widget.sightingId}?'
-                          : '${globals.serverAddress}/confirm/${widget.sightingId}?individual_id=${widget.individualId}';
+                          ? '${globals.serverUrl()}/confirm/${widget.sightingId}?'
+                          : '${globals.serverUrl()}/confirm/${widget.sightingId}?individual_id=${widget.individualId}';
                       Map body = {
                         'spotted_at': spottedAt.toIso8601String(),
                       };

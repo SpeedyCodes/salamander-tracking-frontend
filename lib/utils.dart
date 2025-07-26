@@ -15,7 +15,7 @@ DateTime parseDate(String dt) {
 
 Future<List<Location>> fetchLocations() async {
   final response =
-      await http.get(Uri.parse('${globals.serverAddress}/locations'));
+      await http.get(Uri.parse('${globals.serverUrl()}/locations'));
   if (response.statusCode == 200) {
     return locationsFromJson(response.body);
   }
@@ -24,7 +24,7 @@ Future<List<Location>> fetchLocations() async {
 
 Future<bool> login(String? value) async {
   http.Response response = await http.post(
-    Uri.parse('${globals.serverAddress}/auth'),
+    Uri.parse('${globals.serverUrl()}/auth'),
     headers: {'Content-Type': 'application/json'},
     body: json.encode({"password": value}),
   );
@@ -38,7 +38,7 @@ Future<bool> login(String? value) async {
   Future<http.Response> deleteSighting(int sightingId) {
     return http.delete(
                       Uri.parse(
-                          '${globals.serverAddress}/sightings/$sightingId'),
+                          '${globals.serverUrl()}/sightings/$sightingId'),
                       headers: {
                         "Authorization": globals.authHeader
                       });

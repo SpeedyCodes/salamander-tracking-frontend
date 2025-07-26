@@ -76,7 +76,7 @@ class SightingCandidatePickerScreen extends StatelessWidget {
                           return Column(
                             children: [
                               Image.network(
-                                '${globals.serverAddress}/individuals/${sightingEvaluation.candidates[index].individual.id}/image',
+                                '${globals.serverUrl()}/individuals/${sightingEvaluation.candidates[index].individual.id}/image',
                                 height: 120,
                               ),
                               TextButton(

@@ -22,7 +22,7 @@ class CandidateDetailsScreen extends StatelessWidget {
         children: [
           Expanded(child: PhotoView(
                 imageProvider: NetworkImage(
-                  '${globals.serverAddress}/individuals/${candidate.individual.id}/image'),
+                  '${globals.serverUrl()}/individuals/${candidate.individual.id}/image'),
                 backgroundDecoration: const BoxDecoration(
                   color: Colors.black,
                 ))),
@@ -53,7 +53,7 @@ class CandidateDetailsScreen extends StatelessWidget {
           ),
           const Text("new photo: "),          
           Expanded(child: PhotoView(
-                imageProvider: NetworkImage('${globals.serverAddress}/sightings/$newSightingId/image'),
+                imageProvider: NetworkImage('${globals.serverUrl()}/sightings/$newSightingId/image'),
                 backgroundDecoration: const BoxDecoration(
                   color: Colors.black,
                 ))),

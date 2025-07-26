@@ -31,7 +31,7 @@ class _ProcessedImagesScreenState extends State<ProcessedImagesScreen> {
         itemBuilder: (context, index, realIndex) {
           return PhotoView(
             imageProvider: NetworkImage(
-                    '${globals.serverAddress}/sightings/${widget.sightingId}/image/${imageUrls[index]}'),
+                    '${globals.serverUrl()}/sightings/${widget.sightingId}/image/${imageUrls[index]}'),
             backgroundDecoration: const BoxDecoration(
               color: Colors.black,
             ),

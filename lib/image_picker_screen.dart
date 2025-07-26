@@ -149,7 +149,7 @@ class _ImagePickerScreenState extends State<ImagePickerScreen> {
                     http
                         .post(
                       Uri.parse(
-                          '${globals.serverAddress}/store_sighting${locationSelected != null ? '?location_id=${locationSelected!.id}' : ''}'),
+                          '${globals.serverUrl()}/store_sighting${locationSelected != null ? '?location_id=${locationSelected!.id}' : ''}'),
                       headers: {"Authorization": globals.authHeader},
                       body: body,
                     )

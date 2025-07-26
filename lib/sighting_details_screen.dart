@@ -35,7 +35,7 @@ class SightingDetailsScreen extends StatelessWidget {
           TextButton(onPressed: onPressed, child: const Text('See processed images')),
           Expanded(child: PhotoView(
                 imageProvider: NetworkImage(
-                  '${globals.serverAddress}/sightings/${sighting.id}/image'),
+                  '${globals.serverUrl()}/sightings/${sighting.id}/image'),
                 backgroundDecoration: const BoxDecoration(
                   color: Colors.black,
                 ))
